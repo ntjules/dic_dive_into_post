@@ -23,12 +23,17 @@ class AgendasController < ApplicationController
 
   def destroy
     @agenda = Agenda.find(params[:id])
-    @users = @agenda.team.users #user 全員
-
+    # @users = @agenda.team.users
+    @team_members = @agenda.team.members
+    # puts "---------------------\n"   
+    # @team_members.each do |user|
+    #  puts user.email
+    # end
+    # puts "---------------------\n"   
     if current_user.id ==  @agenda.user_id || current_user.id == @agenda.team.owner_id
       @agenda.destroy
 
-      @users.each do |user|
+      @team_members.each do |user|
         NotifyMailer.mailto_team(user.email, @agenda.title).deliver
       end
       redirect_to dashboard_url, notice: 'Agenda is deleted.'
