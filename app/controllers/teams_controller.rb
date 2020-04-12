@@ -47,6 +47,25 @@ class TeamsController < ApplicationController
     @team = current_user.keep_team_id ? Team.find(current_user.keep_team_id) : current_user.teams.first
   end
 
+  def switch_team_owner
+    @team = Team.friendly.find(params[:id])
+    @assign = Assign.find(params[:assign])
+    puts "switched"
+    if current_user.id == @team.owner_id
+      if @team.update(owner_id: @assign.user.id)
+        TeamLeaderNotifyerMailer.new_team_leader(@assign.user.email,@team.name).deliver
+
+        redirect_to team_url, notice: "Team leader changed successfully"
+      else
+        redirect_to team_url, notice: "change team leader failed!"
+    end
+
+    else
+      redirect_to team_url, notice: "change team leader failed!. you have no right "
+    end
+    
+  end
+
   private
 
   def set_team
