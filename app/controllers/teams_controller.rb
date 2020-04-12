@@ -47,6 +47,11 @@ class TeamsController < ApplicationController
     @team = current_user.keep_team_id ? Team.find(current_user.keep_team_id) : current_user.teams.first
   end
 
+  def switch_team_owner
+    puts "switched"
+    
+  end
+
   private
 
   def set_team
