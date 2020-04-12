@@ -53,6 +53,7 @@ class TeamsController < ApplicationController
     puts "switched"
     if current_user.id == @team.owner_id
       if @team.update(owner_id: @assign.user.id)
+        TeamLeaderNotifyerMailer.new_team_leader(@assign.user.email,@team.name).deliver
 
         redirect_to team_url, notice: "Team leader changed successfully"
       else
