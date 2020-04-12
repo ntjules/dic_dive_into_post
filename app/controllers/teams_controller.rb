@@ -48,7 +48,20 @@ class TeamsController < ApplicationController
   end
 
   def switch_team_owner
+    @team = Team.friendly.find(params[:id])
+    @assign = Assign.find(params[:assign])
     puts "switched"
+    if current_user.id == @team.owner_id
+      if @team.update(owner_id: @assign.user.id)
+
+        redirect_to team_url, notice: "Team leader changed successfully"
+      else
+        redirect_to team_url, notice: "change team leader failed!"
+    end
+
+    else
+      redirect_to team_url, notice: "change team leader failed!. you have no right "
+    end
     
   end
 
