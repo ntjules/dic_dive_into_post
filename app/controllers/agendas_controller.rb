@@ -21,6 +21,22 @@ class AgendasController < ApplicationController
     end
   end
 
+  def destroy
+    @agenda = Agenda.find(params[:id])
+    @users = @agenda.team.users #user 全員
+
+    if current_user.id ==  @agenda.user_id || current_user.id == @agenda.team.owner_id
+      @agenda.destroy
+
+      @users.each do |user|
+        NotifyMailer.mailto_team(user.email, @agenda.title).deliver
+      end
+      redirect_to dashboard_url, notice: 'Agenda is deleted.'
+    else
+      redirect_to dashboard_url, notice: 'You are not authorized to perform such task.'
+    end
+  end
+
   private
 
   def set_agenda
